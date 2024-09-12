@@ -6,7 +6,7 @@ export default {
 }
 
 const getTargetKey = (host, rootDomain) => {
-  return host.split(`.${rootDomain}`)[0].split("-proxy")[0]; 
+  return host.split(`.${rootDomain}`)[0]; 
 }
 
 const isNull = (data) => {
@@ -27,7 +27,7 @@ Disallow: /
    return new Response(robots,{ status: 200 });
   }
 
-  const ownDomain = env.OWN_DOMAIN ? env.OWN_DOMAIN : "serp.ing";
+  const ownDomain = env.DOMAIN ? env.DOMAIN : "serp.ing";
   const targetKey = getTargetKey(host, ownDomain);
   const targetDomain = await env.KV.get(targetKey);
   if (isNull(targetDomain)) {

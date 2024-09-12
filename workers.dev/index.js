@@ -13,17 +13,16 @@ function splitPathname(pathname) {
     const parts = cleanedPath.split('/');
     
     // 处理分割后的结果
-    const x = parts[0] || '';
-    const y = parts.length > 1 ? '/' + parts.slice(1).join('/') : '';
+    const targetDomain = parts[0] || '';
+    const realPathname = parts.length > 1 ? '/' + parts.slice(1).join('/') : '';
     
-    return { x, y };
+    return { targetDomain, realPathname };
 }
 
 async function handleRequest(request, env) {
   const url = new URL(request.url);
-  const { host, originalPathname } = url;
-  const { targetDomain, pathname } = splitPathname(originalPathname)
-
+  const { host, pathname } = url;
+  
   if (pathname === '/robots.txt') {
     const robots = `User-agent: *
 Disallow: /
@@ -31,9 +30,10 @@ Disallow: /
    return new Response(robots,{ status: 200 });
   }
 
+  const { targetDomain, realPathname } = splitPathname(pathname);
   const ownDomain = env.OWN_DOMAIN ? env.OWN_DOMAIN : "serp.ing";
   const origin = `https://${targetDomain}`; 
-  const actualUrl = new URL(`${origin}${pathname}${url.search}${url.hash}`); 
+  const actualUrl = new URL(`${origin}${realPathname}${url.search}${url.hash}`); 
 
   const modifiedRequestInit = {
     method: request.method,

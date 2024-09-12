@@ -1,12 +1,13 @@
+var env;
+
 addEventListener('fetch', event => {
+  env = event.env;
   event.respondWith(handleRequest(event.request));
 });
  
 const getTargetDomain = (host, rootDomain) => {
   return host.split(`.${rootDomain}`)[0]; 
 }
- 
-const ownDomain = "serp.ing";
 
 async function handleRequest(request) {
   const url = new URL(request.url);
@@ -19,6 +20,7 @@ Disallow: /
    return new Response(robots,{ status: 200 });
   }
 
+  const ownDomain = env.OWN_DOMAIN ? env.OWN_DOMAIN : "serp.ing";
   const targetDomain = getTargetDomain(host, ownDomain); 
   const origin = `https://${targetDomain}`; 
   const actualUrl = new URL(`${origin}${pathname}${url.search}${url.hash}`); 

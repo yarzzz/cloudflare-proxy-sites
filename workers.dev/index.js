@@ -5,6 +5,17 @@ export default {
   }
 }
 
+const getTargetKey = (host, rootDomain) => {
+  return host.split(`.${rootDomain}`)[0]; 
+}
+
+const isNull = (data) => {
+  if (!data || data == undefined || data == null || data == 'undefined' || data == 'null' || data == '[]' || data == '""' || data == '') {
+    return true;
+  }
+  return false;
+}
+
 async function handleRequest(request, env) {
   const url = new URL(request.url);
   const { host, pathname } = url;
@@ -16,7 +27,12 @@ Disallow: /
    return new Response(robots,{ status: 200 });
   }
 
-  const targetDomain = env.TARGET ? env.TARGET : 'www.proxysites.ai';
+  const ownDomain = env.OWN_DOMAIN ? env.OWN_DOMAIN : "serp.ing";
+  const targetKey = getTargetKey(host, ownDomain);
+  const targetDomain = await env.KV.get(targetKey);
+  if (isNull(targetDomain)) {
+    return new Response('Page not found', { status: 404 });
+  }
   const origin = `https://${targetDomain}`; 
   const actualUrl = new URL(`${origin}${pathname}${url.search}${url.hash}`); 
 

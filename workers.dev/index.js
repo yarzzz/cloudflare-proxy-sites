@@ -1,9 +1,11 @@
 // workers.dev/index.js
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
+export default {
+  async fetch(request, env) {
+    return handleRequest(request, env);
+  }
+}
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const url = new URL(request.url);
   const { host, pathname } = url;
 
@@ -14,7 +16,7 @@ Disallow: /
    return new Response(robots,{ status: 200 });
   }
 
-  const targetDomain = 'www.proxysites.ai';
+  const targetDomain = env.TARGET ? env.TARGET : 'www.proxysites.ai';
   const origin = `https://${targetDomain}`; 
   const actualUrl = new URL(`${origin}${pathname}${url.search}${url.hash}`); 
 

@@ -2,6 +2,7 @@ export default {
   async fetch(request, env) {
     return handleRequest(request, env);
   }
+}
  
 const getTargetDomain = (host, rootDomain) => {
   return host.split(`.${rootDomain}`)[0]; 

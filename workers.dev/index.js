@@ -16,9 +16,24 @@ const isNull = (data) => {
   return false;
 }
 
+function splitPathname(pathname) {
+    // 移除开头的斜杠（如果有）
+    const cleanedPath = pathname.startsWith('/') ? pathname.slice(1) : pathname;
+    
+    // 分割路径
+    const parts = cleanedPath.split('/');
+    
+    // 处理分割后的结果
+    const x = parts[0] || '';
+    const y = parts.length > 1 ? '/' + parts.slice(1).join('/') : '';
+    
+    return { x, y };
+}
+
 async function handleRequest(request, env) {
   const url = new URL(request.url);
-  const { host, pathname } = url;
+  const { host, originalPathname } = url;
+  const { targetDomain, pathname } = splitPathname(originalPathname)
 
   if (pathname === '/robots.txt') {
     const robots = `User-agent: *
@@ -28,11 +43,6 @@ Disallow: /
   }
 
   const ownDomain = env.OWN_DOMAIN ? env.OWN_DOMAIN : "serp.ing";
-  const targetKey = getTargetKey(host, ownDomain);
-  const targetDomain = await env.KV.get(targetKey);
-  if (isNull(targetDomain)) {
-    return new Response('Page not found', { status: 404 });
-  }
   const origin = `https://${targetDomain}`; 
   const actualUrl = new URL(`${origin}${pathname}${url.search}${url.hash}`); 
 
@@ -59,7 +69,7 @@ Disallow: /
     let text = new TextDecoder('utf-8').decode(body);
 
     // Replace all instances of the proxy site domain with the current host domain in the text
-    text = text.replace(new RegExp( `(//|https?://)${targetDomain}`, 'g'), `$1${host}` );
+    text = text.replace(new RegExp( `(//|https?://)${targetDomain}`, 'g'), `$1${host}/{targetDomain}` );
     body = new TextEncoder().encode(text).buffer;
   }
 

@@ -6,7 +6,7 @@ export default {
 }
 
 const getTargetKey = (host, rootDomain) => {
-  return host.split(`.${rootDomain}`)[0]; 
+  return host.split(`.${rootDomain}`)[0].split("-proxy")[0]; 
 }
 
 const isNull = (data) => {

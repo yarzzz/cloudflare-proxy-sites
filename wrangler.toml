@@ -2,3 +2,7 @@ name = "proxysites"
 main = "workers.dev/index.js"
 compatibility_date = "2024-05-24"
 node_compat = true
+
+kv_namespaces = [
+  { binding = "KV", id = "1fdb38f1cac946978a977e3de609286f" }
+]

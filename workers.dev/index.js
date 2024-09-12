@@ -5,17 +5,6 @@ export default {
   }
 }
 
-const getTargetKey = (host, rootDomain) => {
-  return host.split(`.${rootDomain}`)[0]; 
-}
-
-const isNull = (data) => {
-  if (!data || data == undefined || data == null || data == 'undefined' || data == 'null' || data == '[]' || data == '""' || data == '') {
-    return true;
-  }
-  return false;
-}
-
 function splitPathname(pathname) {
     // 移除开头的斜杠（如果有）
     const cleanedPath = pathname.startsWith('/') ? pathname.slice(1) : pathname;

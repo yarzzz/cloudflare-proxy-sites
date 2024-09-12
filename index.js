@@ -1,15 +1,13 @@
-var env;
-
-addEventListener('fetch', event => {
-  env = event.env;
-  event.respondWith(handleRequest(event.request));
-});
+export default {
+  async fetch(request, env) {
+    return handleRequest(request, env);
+  }
  
 const getTargetDomain = (host, rootDomain) => {
   return host.split(`.${rootDomain}`)[0]; 
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const url = new URL(request.url);
   const { host, pathname } = url;
 
